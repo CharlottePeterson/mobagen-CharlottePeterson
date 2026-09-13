@@ -9,17 +9,16 @@ glm::vec2 MouseInfluenceRule::computeForce(const std::vector<BoidView>& neighbor
   // glm::length(vec) returns the length of a vector
 
   // begin solution
-
-
+  float length;
+  glm::vec2 distance(0, 0);
   if (isRepulsive) //go away from mouse
   {
     if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-      glm::vec2 dist(0, 0);
+
       glm::vec2 mousePos(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-      dist = boid.position - mousePos;
-      float length;
-      length = dist.length();
-      glm::vec2 repulsion = glm::normalize(dist) * length;
+      distance = boid.position - mousePos;
+      length = distance.length();
+      glm::vec2 repulsion = glm::normalize(distance) * length;
       force += repulsion;
     }
   }
@@ -27,15 +26,16 @@ glm::vec2 MouseInfluenceRule::computeForce(const std::vector<BoidView>& neighbor
   if (!isRepulsive) //go towards mouse
   {
     if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-      glm::vec2 dist(0, 0);
-      glm::vec2 mousePos(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-      dist = boid.position - mousePos;
-      float length;
-      length = dist.length();
-      glm::vec2 repulsion = glm::normalize(dist) * length;
+
+      glm::vec2 mousePos(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y); //gets mouse position
+      distance = boid.position - mousePos; //get distance from mouse and boid
+      length = distance.length();
+      glm::vec2 repulsion = glm::normalize(distance) * length;
       force -= repulsion;
     }
   }
+
+  force*= weight*100;
 
   // end solution
 

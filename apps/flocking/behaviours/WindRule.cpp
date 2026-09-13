@@ -14,7 +14,7 @@ glm::vec2 WindRule::computeForce(const std::vector<BoidView>& neighborhood, cons
 
   // begin solution
   glm::vec2 windForce (0.f,0.f);
-  //wind angle to radians
+
 
   windForce.x= cos(windAngle);
   windForce.y= sin(windAngle);

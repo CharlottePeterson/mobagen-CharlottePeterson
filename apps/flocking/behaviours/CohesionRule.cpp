@@ -22,13 +22,11 @@ glm::vec2 CohesionRule::computeForce(const std::vector<BoidView>& neighborhood, 
       CenterOfGroup += neighbor.position;
   }
 
-  CenterOfGroup/=neighborhood.size();
-  //i think i need to redo this part
-  //float Mag=glm::length(glm::vec2(CenterOfGroup+boid.position));
+  CenterOfGroup/=neighborhood.size(); // gets the average by dividing by neighborhood size
 
- // cohesionForce += glm::normalize(glm::vec2(CenterOfGroup-boid.position)*(Mag*this->weight));
-  cohesionForce += glm::vec2(CenterOfGroup-boid.position)*(this->weight);
+  cohesionForce += glm::vec2(CenterOfGroup-boid.position)*(this->weight); //calcultes the cohesion force
 
+  //normalize, mult by weight then return
   cohesionForce= glm::normalize(cohesionForce);
   cohesionForce*=this->weight*100;
   return cohesionForce;

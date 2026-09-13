@@ -106,7 +106,7 @@ HexagonGameOfLife::HexagonGameOfLife() {
   //   dead->AddAction(std::make_shared<StayDeadAction>());
   // begin solution
 
-  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "HexagonGameOfLife: transitions and actions for alive and dead states not implemented yet");
+ // SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "HexagonGameOfLife: transitions and actions for alive and dead states not implemented yet");
 
   // end solution
 }

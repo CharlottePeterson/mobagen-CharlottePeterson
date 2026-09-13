@@ -24,6 +24,14 @@ class Underpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the underpopulation condition
+    //Any live cell with fewer than two live neighbours dies (referred to as underpopulation or exposure[2]).
+    if (context.aliveNeighbors <2)
+    {
+      //set cell to die
+      return true;
+    }
+    else {return false;}
+
     throw std::logic_error("Underpopulation condition not implemented yet");
   }
 };
@@ -32,6 +40,15 @@ class Overpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the overpopulation condition
+    //Any live cell with more than three live neighbours dies (referred to as overpopulation or overcrowding).
+    if (context.aliveNeighbors > 3)
+    {
+      //set cell to die
+      return true;
+
+    }
+    else {return false;}
+
     throw std::logic_error("Overpopulation condition not implemented yet");
   }
 };
@@ -40,7 +57,15 @@ class Reproduction : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the reproduction condition
-    throw std::logic_error("Reproduction condition not implemented yet");
+    //Any live cell with two or three live neighbours lives, unchanged, to the next generation.
+   if ( context.aliveNeighbors == 3 )
+   {
+      //set cell to alive
+     return true;
+   }
+
+   else {return false;}
+    //throw std::logic_error("Reproduction condition not implemented yet");
   }
 };
 
@@ -50,8 +75,8 @@ public:
     // todo: implement the die action,
     // hint:
     //   use the context.world.SetNext() to set the next state of the cell to dead
-    //   use the context.position to get the current cell's position
-    throw std::logic_error("Die action not implemented yet");
+    context.world.SetNext(context.position,false);
+
   }
 };
 
@@ -59,7 +84,12 @@ class BornAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("Born action not implemented yet");
+    //   use the context.world.SetNext() to set the next state of the cell to alive
+        //context.world.SetNext(alive);
+      context.world.SetNext(context.position,true);
+
+    //   use the context.position to get the current cell's position
+   // throw std::logic_error("Born action not implemented yet");
   }
 };
 
@@ -67,7 +97,11 @@ class StayAliveAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("StayAlive action not implemented yet");
+    //set context to alive
+    //context.world.SetNext(alive);
+    context.world.SetNext(context.position,true);
+
+    //throw std::logic_error("StayAlive action not implemented yet");
   }
 };
 
@@ -75,7 +109,10 @@ class StayDeadAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("StayDead action not implemented yet");
+    context.world.SetNext(context.position,false);
+
+
+    //throw std::logic_error("StayDead action not implemented yet");
   }
 };
 }  // namespace conway
@@ -98,7 +135,22 @@ JohnConway::JohnConway() {
   // begin solution
   // note: log instead of throw - the constructor runs at app startup and at
   // every fixture load; throwing here would kill the process before it runs.
-  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "JohnConway: transitions and actions for alive and dead states not implemented yet");
+
+  //alive actions
+  alive->AddEntryAction(std::make_shared<BornAction>());
+  alive->AddExitAction(std::make_shared<DieAction>());
+  alive->AddAction(std::make_shared<StayAliveAction>());
+  alive->AddTransition(std::make_shared<Underpopulation>(), dead, {die});
+  alive->AddTransition(std::make_shared<Overpopulation>(), dead, {die});
+
+  //dead actions
+  dead->AddEntryAction(std::make_shared<DieAction>());
+  dead->AddExitAction(std::make_shared<BornAction>());
+  dead->AddAction(std::make_shared<StayDeadAction>());
+  dead->AddTransition(std::make_shared<Reproduction>(), alive, {born});
+
+
+  //SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "JohnConway: transitions and actions for alive and dead states not implemented yet");
 
   // end solution
 }
@@ -132,8 +184,25 @@ int JohnConway::CountNeighbors(World& world, Point2D point) {
   //   a square cell has 8 neighbors, one per dx/dy in {-1, 0, 1}, excluding itself
   //   world.Get({point.x + dx, point.y + dy}) wraps around the borders (toroidal)
   // begin solution
+  int count = 0;
+  //top right
+  if (world.Get({point.x-1, point.y-1})==true) {count++;}
+  //Top middle
+  if (world.Get({point.x-1, point.y})==true) {count++;}
+  //Top left
+  if (world.Get({point.x-1, point.y+1})==true) {count++;}
+  //Middle right
+  if (world.Get({point.x, point.y-1})==true) {count++;}
+  //Middle Left
+  if (world.Get({point.x, point.y+1})==true) {count++;}
+  //Bottom right
+  if (world.Get({point.x+1, point.y-1})==true) {count++;}
+  //bottom middle
+  if (world.Get({point.x+1, point.y})==true) {count++;}
+  //bottom left
+  if (world.Get({point.x+1, point.y+1})==true) {count++;}
 
+  return count;
   throw std::logic_error("CountNeighbors not implemented yet");
-
-  // end solution
+ // end solution
 }
